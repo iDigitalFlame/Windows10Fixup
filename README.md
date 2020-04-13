@@ -34,4 +34,10 @@ Run the following command:
 powershell -ExecutionPolicy Unrestricted -File FixWin10.ps1
 ```
 
+- or -
+
+```[powershell]
+powershell -ExecutionPolicy Unrestricted -Command "Invoke-WebRequest -UseBasicParsing 'https://dij.sh/win10' | Invoke-Expression"
+```
+
 The script will prompt for UAC when needed.

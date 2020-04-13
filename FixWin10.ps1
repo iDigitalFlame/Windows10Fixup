@@ -794,7 +794,12 @@ function RegistryUserSettings($uid = "") {
 
 # Run This Script as Administrator First, then run as user.
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process -Wait -Verb RunAs powershell.exe "-NoProfile -ExecutionPolicy Unrestricted -File `"$PSCommandPath`""
+    If ($Invocation.MyCommand.Path.length -eq 0) {
+        Start-Process -Wait -Verb RunAs powershell.exe "-NoProfile -ExecutionPolicy Unrestricted -Command `"Invoke-WebRequest -UseBasicParsing 'https://dij.sh/win10' | Invoke-Expression`""
+    }
+    Else {
+        Start-Process -Wait -Verb RunAs powershell.exe "-NoProfile -ExecutionPolicy Unrestricted -File `"$PSCommandPath`""
+    }
 }
 
 Write-Host -ForegroundColor Cyan "Windows10 (Un)Fucker."
