@@ -18,6 +18,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+$ErrorActionPreference = "SilentlyContinue"
+
 function mkdir($dir) {
     if (Test-Path $dir) {
         return
