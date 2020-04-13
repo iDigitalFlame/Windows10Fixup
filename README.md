@@ -26,7 +26,7 @@ Enables the Linux Subsystem!
 
 ## How to run
 
-Download the script from here or ```dij.sh/win10```
+Download the script from here or ```dij.sh/win10``` [Link](https://dij.sh/win10)
 
 Run the following command:
 
