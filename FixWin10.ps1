@@ -224,6 +224,7 @@ Function PackageSettings() {
     Get-AppxPackage "Microsoft.XboxGameOverlay" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.XboxGamingOverlay" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.Xbox.TCUI" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+    Get-AppxPackage | where-Object { !$_.Publisher.Contains("CN=Microsoft ") } | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
 
     $p = @(
         "Anytime"
