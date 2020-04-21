@@ -462,6 +462,7 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
     mkdir "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings"
     mkdir "HKLM:\Software\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting"
@@ -470,6 +471,8 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location"
     mkdir "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access"
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118"
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\ActionCenter\Quick Actions\All\SystemSettings_Launcher_QuickNote"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag"
@@ -535,8 +538,13 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Addons" -Name "FlashPlayerEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "PUAProtection" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "DisableRoutinelyTakingAction" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Spynet" -Name "SpynetReporting" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Spynet" -Name "SubmitSamplesConsent" -Type DWord -Value 2 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableRealtimeMonitoring" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" -Name "EnableNetworkProtection" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access" -Name "EnableControlledFolderAccess" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24" -Name "Category" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Reliability" -Name "ShutdownReasonOn" -Type DWord -Value 0 | Out-Null
@@ -812,6 +820,20 @@ This will break ALOT of things, YOU HAVE BEEN WARNED!!
 If (!$IsAdmin) {
     Write-Host -ForegroundColor White "Opening an admin version. Please accept the UAC prompt."
     Start-Process -Wait -Verb RunAs powershell.exe $InvokeMe
+}
+Else {
+    Set-MpPreference -DisableRealtimeMonitoring $true
+    If (!(Get-MpPreference).DisableRealtimeMonitoring) {
+        Write-Host -ForegroundColor DarkRed "Please disable Windows Defender's Tamper Protection to continue!"
+        Start-Process explorer.exe "windowsdefender:"
+        While (!(Get-MpPreference).DisableRealtimeMonitoring) {
+            Set-MpPreference -DisableRealtimeMonitoring $true
+            Start-Sleep -Seconds 1
+        }
+    }
+    Set-MpPreference -DisableRealtimeMonitoring $true
+    Set-MpPreference -DisableIntrusionPreventionSystem $true
+    Set-MpPreference -DisableScriptScanning $true
 }
 
 New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS -ErrorAction SilentlyContinue | Out-Null
