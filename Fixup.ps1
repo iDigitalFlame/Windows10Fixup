@@ -677,7 +677,6 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\FlipAhead"
     mkdir "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter"
     mkdir "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\User\Default\SearchScopes"
-
     ForEach ($k in (Get-ChildItem "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global")) {
         if ($k.PSChildName -eq "LooselyCoupled") {
             continue
@@ -690,7 +689,6 @@ function RegistryUserSettings($uid = "") {
         Set-ItemProperty -ErrorAction SilentlyContinue -Path $_.PsPath -Name "Disabled" -Type DWord -Value 1 | Out-Null
         Set-ItemProperty -ErrorAction SilentlyContinue -Path $_.PsPath -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
     }
-
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Control Panel\Accessibility\Keyboard Response" -Name "Flags" -Type String -Value "122" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Control Panel\Accessibility\ToggleKeys" -Name "Flags" -Type String -Value "58" | Out-Null
@@ -784,9 +782,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "NoTileApplicationNotification" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Wow6432Node\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 | Out-Null
-
     Remove-ItemProperty -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "FavoritesResolve" -ErrorAction SilentlyContinue | Out-Null
-
     Remove-Item -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" -Recurse -ErrorAction SilentlyContinue | Out-Null
 }
 
