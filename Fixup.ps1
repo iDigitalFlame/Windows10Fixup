@@ -18,7 +18,14 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+$InvokeURL = "https://dij.sh/win10"
 $ErrorActionPreference = "SilentlyContinue"
+$InvokeMe = "-NoProfile -ExecutionPolicy Unrestricted -File `"$PSCommandPath`""
+$IsAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+
+If ($PSCommandPath.length -eq 0) {
+    $InvokeMe = "-NoProfile -ExecutionPolicy Unrestricted -Command `"Invoke-WebRequest -UseBasicParsing '$($InvokeURL)' | Invoke-Expression`""
+}
 
 function mkdir($dir) {
     if (Test-Path $dir) {
@@ -27,7 +34,7 @@ function mkdir($dir) {
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
 }
 function TaskSettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up Tasks..."
+    Write-Host -ForegroundColor Cyan "Removing un-needed Tasks ..."
     Get-ScheduledTask -TaskPath '\' -TaskName 'OneDrive*' -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$false | Out-Null
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\.NET Framework\.NET Framework NGEN v4.0.30319" | Out-Null
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\.NET Framework\.NET Framework NGEN v4.0.30319 64" | Out-Null
@@ -102,34 +109,9 @@ function TaskSettings() {
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\WS\License Validation" | Out-Null
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\WS\WSTask" | Out-Null
 }
-Function StartSettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up Start..."
-    Remove-Item -Force "$($env:USERPROFILE)\Desktop\Microsoft edge.lnk" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\3D Objects" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Contacts" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Favorites" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Pictures" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\MicrosoftEdgeBackups" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Music" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Saved Games" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Searches" -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Videos" -ErrorAction SilentlyContinue | Out-Null
-    If ([System.Environment]::OSVersion.Version.Build -ge 15063 -And [System.Environment]::OSVersion.Version.Build -le 16299) {
-        Get-ChildItem -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Include "*.group" -Recurse | ForEach-Object {
-            $d = (Get-ItemProperty -Path "$($_.PsPath)\Current" -Name "Data").Data -Join ","
-            $d = $data.Substring(0, $d.IndexOf(",0,202,30") + 9) + ",0,202,80,0,0"
-            Set-ItemProperty -ErrorAction SilentlyContinue -Path "$($_.PsPath)\Current" -Name "Data" -Type Binary -Value $d.Split(",") -ErrorAction SilentlyContinue | Out-Null
-        }
-    }
-    ElseIf ([System.Environment]::OSVersion.Version.Build -eq 17133) {
-        $k = Get-ChildItem -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Recurse | Where-Object { $_ -like "*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current" }
-        $d = (Get-ItemProperty -Path $k.PSPath -Name "Data").Data[0..25] + ([byte[]](202, 50, 0, 226, 44, 1, 1, 0, 0))
-        Set-ItemProperty -ErrorAction SilentlyContinue -Path $k.PSPath -Name "Data" -Type Binary -Value $d -ErrorAction SilentlyContinue | Out-Null
-    }
-}
 function PowerSettings() {
-    Write-Host -ForegroundColor Green "Fixing Power Settings..."
-    Disable-MMAgent -mc -ErrorAction SilentlyContinue | Out-Null
+    Write-Host -ForegroundColor Cyan "Adding better power and disk settings..."
+    Disable-MMAgent -MemoryCompression -ErrorAction SilentlyContinue | Out-Null
     Disable-MMAgent -ApplicationPreLaunch -ErrorAction SilentlyContinue | Out-Null
     fsutil behavior set DisableLastAccess 1 | Out-Null
     fsutil behavior set EncryptPagingFile 0 | Out-Null
@@ -140,8 +122,21 @@ function PowerSettings() {
     powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_BUTTONS SBUTTONACTION 0 | Out-Null
     powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_BUTTONS SBUTTONACTION 0 | Out-Null
 }
+Function FolderSettings() {
+    Write-Host -ForegroundColor Cyan "Removing un-needed user directories..."
+    Remove-Item -Force "$($env:USERPROFILE)\Desktop\Microsoft edge.lnk" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\3D Objects" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Contacts" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Favorites" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Pictures" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\MicrosoftEdgeBackups" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Music" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Saved Games" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Searches" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Force -Recurse "$($env:USERPROFILE)\Videos" -ErrorAction SilentlyContinue | Out-Null
+}
 Function PackageSettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up AppxPackages..."
+    Write-Host -ForegroundColor Cyan "Removing un-needed AppX Packages..."
     Get-AppxPackage "Microsoft.3DBuilder" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.AppConnector" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.BingFinance" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
@@ -225,36 +220,28 @@ Function PackageSettings() {
     Get-AppxPackage "Microsoft.XboxGamingOverlay" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.Xbox.TCUI" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage | where-Object { !$_.Publisher.Contains("CN=Microsoft ") } | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-
     $p = @(
-        "Anytime"
-        "BioEnrollment"
-        "Browser"
-        "ContactSupport"
-        "Defender"
         "Feedback"
         "Flash"
         "Gaming"
         "Holo"
-        "InternetExplorer"
         "Maps"
         "MiracastView"
         "OneDrive"
-        "SecHealthUI"
         "Wallet"
     )
     foreach ($i in $p) {
         $m = (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\Packages" | Where-Object Name -Like "*$i*")
         foreach ($n in $m) {
-            Set-ItemProperty -ErrorAction SilentlyContinue -Path ("HKLM:" + $n.Name.Substring(18)) -Name Visibility -Value 1 -ErrorAction SilentlyContinue | Out-Null
-            New-ItemProperty -Path ("HKLM:" + $n.Name.Substring(18)) -Name DefVis -PropertyType DWord -Value 2 -ErrorAction SilentlyContinue | Out-Null
-            Remove-Item -Path ("HKLM:" + $n.Name.Substring(18) + "\Owners") -ErrorAction SilentlyContinue | Out-Null
+            Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:$($n.Name.Substring(18))" -Name Visibility -Value 1 -ErrorAction SilentlyContinue | Out-Null
+            New-ItemProperty -Path "HKLM:$($n.Name.Substring(18))" -Name DefVis -PropertyType DWord -Value 2 -ErrorAction SilentlyContinue | Out-Null
+            Remove-Item -Path "HKLM:$($n.Name.Substring(18))\Owners" -ErrorAction SilentlyContinue | Out-Null
             dism.exe /Online /Remove-Package /PackageName:$($n.Name.split('\')[-1]) /NoRestart | Out-Null
         }
     }
 }
 function NetworkSettings() {
-    Write-Host -ForegroundColor Green "Fixing Network Settings..."
+    Write-Host -ForegroundColor Cyan "Disabling un-needed network settings..."
     Enable-NetFirewallRule -Name "RemoteDesktop*" -ErrorAction SilentlyContinue | Out-Null
     Set-NetConnectionProfile -NetworkCategory Private -ErrorAction SilentlyContinue | Out-Null
     Set-MpPreference -EnableControlledFolderAccess Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -262,7 +249,7 @@ function NetworkSettings() {
     Set-SmbServerConfiguration -EnableSMB2Protocol $false -Force -ErrorAction SilentlyContinue | Out-Null
 }
 function FeatureSettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up Features..."
+    Write-Host -ForegroundColor Cyan "Disabling un-needed Features..."
     Enable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Windows-Subsystem-Linux" -NoRestart -ErrorAction SilentlyContinue | Out-Null
     Disable-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-Features" -NoRestart -ErrorAction SilentlyContinue | Out-Null
     Disable-WindowsOptionalFeature -Online -FeatureName "FaxServicesClientPackage" -NoRestart -ErrorAction SilentlyContinue | Out-Null
@@ -280,8 +267,27 @@ function FeatureSettings() {
     Remove-Item -Path "C:\Programdata\Microsoft\Windows\Start Menu\Programs\MiracastView.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
 }
 function ServiceSettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up Services..."
+    Write-Host -ForegroundColor Cyan "Disabling un-needed Services..."
+    Set-Service "ALG" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "SharedRealitySvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "TapiSvr" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "wmiApSrv" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "AssignedAccessManagerSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "bthserv" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "DevQueryBroker" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "embeddedmode" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "WFDSConMgrSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "WerSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "PushToInstall" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "spectrum" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "diagsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "NcaSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "NcdAutoSetup" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "lltdsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "SecurityHealthService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "EntAppSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AppReadiness" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "CDPSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "BthAvctpSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AudioEndpointBuilder" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "wsappx" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -297,7 +303,6 @@ function ServiceSettings() {
     Set-Service "ClipSVC" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "CscService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "defragsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "diagsvr" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "DiagTrack" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "DoSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "DsSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -317,6 +322,7 @@ function ServiceSettings() {
     Set-Service "NaturalAuthentication" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "OneSyncSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "p2ppimsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "p2pimsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "p2psvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "PcaSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "PeerDistSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -349,7 +355,6 @@ function ServiceSettings() {
     Set-Service "ssh-agent" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "TabletInputService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "TapiSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "Themes" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "TokenBroker" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "TroubleshootingSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -359,29 +364,26 @@ function ServiceSettings() {
     Set-Service "VSS" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WarpJITSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WalletService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "wcnsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "wcncsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WdiServiceHost" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WdiSystemHost" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WebClient" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WEPHOSTSVC" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "wercplsupport" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "WersVR" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "WFDSConMgrSvr" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null # NE
     Set-Service "WinRM" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "workfoldersvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null #ne
+    Set-Service "workfolderssvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null #ne
     Set-Service "WpcMonSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WpnService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WpnUserService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "XblAuthManager" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "XblGamesave" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "XblGipSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null # ne
+    Set-Service "XboxGipSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null # ne
     Set-Service "XboxNetApiSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AJRouter" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "ndu" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "lfsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "TrkWks" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "wscvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "wscsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WSearch" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "SysMain" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "WbioSrvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -401,7 +403,7 @@ function ServiceSettings() {
     Set-Service "diagnosticshub.standardcollector.service" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
 }
 Function OneDriveSettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up OneDrive..."
+    Write-Host -ForegroundColor Cyan "Removing OneDrive..."
     Stop-Process -Name "OneDrive" -ErrorAction SilentlyContinue | Out-Null
     Start-Sleep -s 2
     $od = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
@@ -414,30 +416,24 @@ Function OneDriveSettings() {
     Start-Sleep -s 2
     Stop-Process -Name "explorer" -ErrorAction SilentlyContinue | Out-Null
     Start-Sleep -s 2
-
     Remove-Item -Path "$env:USERPROFILE\OneDrive" -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Force "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -ErrorAction SilentlyContinue | Out-Null
-
     foreach ($i in (Get-ChildItem "$env:WinDir\WinSxS\*onedrive*")) {
         Remove-Item -Recurse -Force $i.FullName -ErrorAction SilentlyContinue | Out-Null
     }
-
     Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue | Out-Null
-
     mkdir "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
     mkdir "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
-
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 -ErrorAction SilentlyContinue | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 -ErrorAction SilentlyContinue | Out-Null
-
     Remove-ItemProperty "HKU:\Default\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OneDriveSetup" -Force -ErrorAction SilentlyContinue | Out-Null
 }
-function RegistrySettings() {
-    Write-Host -ForegroundColor Green "Cleaning Up Registry (System)..."
+function RegistrySettings($IsAdmin) {
+    Write-Host -ForegroundColor Cyan "Adding privacy settings in registry..."
     mkdir "HKLM:\Software\Microsoft\WlanSvc\AnqpCache"
     mkdir "HKLM:\Software\Policies\Microsoft\WindowsStore"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\GameDVR"
@@ -482,21 +478,17 @@ function RegistrySettings() {
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118\SocialNetworks\FACEBOOK"
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118\SocialNetworks\ABCH-SKYPE"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24"
-
     ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
         New-Item -ErrorAction SilentlyContinue -Path $("HKCR:\$type\shell\open") -Force | Out-Null
         New-Item -ErrorAction SilentlyContinue -Path $("HKCR:\$type\shell\open\command") | Out-Null
         Set-ItemProperty -ErrorAction SilentlyContinue -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043" | Out-Null
         Set-ItemProperty -ErrorAction SilentlyContinue -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1" | Out-Null
     }
-
     Set-Item "HKLM:\Software\Classes\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" ""
-
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder" -Name "Attributes" -Type DWord 0 -Value 0xA0100000 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Value 0xB0040064 | Out-Null
-
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name "IsInstalled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}" -Name "IsInstalled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 0 | Out-Null
@@ -531,6 +523,7 @@ function RegistrySettings() {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "SettingsPageVisibility" -Type String -Value "hide:appsfeatures;appsforwebsites;autoplay;backup;clipboard;cortana;cortana-language;cortana-moredetails;cortana-permissions;cortana-windowssearch;crossdevice;datausage;delivery-optimization;extras;findmydevice;fonts;maps;mobile-devices;network-cellular;network-dialup;network-directaccess;network-mobilehotspot;network-proxy;network-status;network-vpn;nfctransactions;otherusers;pen;powersleep;privacy-accountinfo;privacy-activityhistory;privacy-backgroundapps;privacy-calendar;privacy-callhistory;privacy-contacts;privacy-customdevices;privacy-email;privacy-feedback;privacy-general;privacy-location;privacy-messaging;privacy-microphone;privacy-motion;privacy-radios;privacy-speech;privacy-speechtyping;privacy-webcam;quiethours;recovery;regionlanguage;remotedesktop;search;search-moredetails;storagesense;sync;themes;troubleshoot;usb;workplace;windowsdefender;signinoptions;emailandaccounts;"
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ShutdownWithoutLogon" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "DisableCAD" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections" -Type DWord -Value 1 | Out-Null
@@ -598,21 +591,19 @@ function RegistrySettings() {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\Sense" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\Sense" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\DoSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\wscsvc" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\mpssvc" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\PcaSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\SecurityHealthService" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\WinDefend" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Services\WinDefend" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener" -Name "Start" -Type DWord -Value 0 | Out-Null
-
     Remove-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth" -ErrorAction SilentlyContinue | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -ErrorAction SilentlyContinue | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\QualityCompat" -Name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -ErrorAction SilentlyContinue | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -ErrorAction SilentlyContinue | Out-Null
-
     Remove-Item -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}" -Recurse -ErrorAction SilentlyContinue | Out-Null
@@ -631,11 +622,9 @@ function RegistrySettings() {
     Remove-Item -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -Recurse -ErrorAction SilentlyContinue | Out-Null
-
-    If (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+    If ($IsAdmin) {
         $u = New-Object System.Security.Principal.NTAccount($env:UserName)
-        $i = $u.Translate([System.Security.Principal.SecurityIdentifier]).value
-        RegistryUserSettings $i
+        RegistryUserSettings $($u.Translate([System.Security.Principal.SecurityIdentifier]).value)
     }
 }
 function RegistryUserSettings($uid = "") {
@@ -643,7 +632,7 @@ function RegistryUserSettings($uid = "") {
     if ($uid.length -gt 0) {
         $regpath = "HKU:\$uid"
     }
-    Write-Host -ForegroundColor Green "Cleaning Up Registry (User)..."
+    Write-Host -ForegroundColor Cyan "Adding privacy respecting user defaults..."
     mkdir "$regpath\Printers\Defaults"
     mkdir "$regpath\Software\Microsoft\Input\TIPC"
     mkdir "$regpath\Software\Microsoft\Siuf\Rules"
@@ -685,9 +674,9 @@ function RegistryUserSettings($uid = "") {
         if ($k.PSChildName -eq "LooselyCoupled") {
             continue
         }
-        Set-ItemProperty -ErrorAction SilentlyContinue -Path ("$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\" + $k.PSChildName) -Name "Type" -Type String -Value "InterfaceClass" | Out-Null
-        Set-ItemProperty -ErrorAction SilentlyContinue -Path ("$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\" + $k.PSChildName) -Name "Value" -Type String -Value "Deny" | Out-Null
-        Set-ItemProperty -ErrorAction SilentlyContinue -Path ("$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\" + $k.PSChildName) -Name "InitialAppValue" -Type String -Value "Unspecified" | Out-Null
+        Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\$($k.PSChildName)" -Name "Type" -Type String -Value "InterfaceClass" | Out-Null
+        Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\$($k.PSChildName)" -Name "Value" -Type String -Value "Deny" | Out-Null
+        Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\$($k.PSChildName)" -Name "InitialAppValue" -Type String -Value "Unspecified" | Out-Null
     }
     Get-ChildItem -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Exclude "Microsoft.Windows.Cortana*" | ForEach-Object {
         Set-ItemProperty -ErrorAction SilentlyContinue -Path $_.PsPath -Name "Disabled" -Type DWord -Value 1 | Out-Null
@@ -793,35 +782,55 @@ function RegistryUserSettings($uid = "") {
     Remove-Item -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" -Recurse -ErrorAction SilentlyContinue | Out-Null
 }
 
-# Run This Script as Administrator First, then run as user.
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    If ($Invocation.MyCommand.Path.length -eq 0) {
-        Start-Process -Wait -Verb RunAs powershell.exe "-NoProfile -ExecutionPolicy Unrestricted -Command `"Invoke-WebRequest -UseBasicParsing 'https://dij.sh/win10' | Invoke-Expression`""
-    }
-    Else {
-        Start-Process -Wait -Verb RunAs powershell.exe "-NoProfile -ExecutionPolicy Unrestricted -File `"$PSCommandPath`""
-    }
-}
+[Console]::ForegroundColor = "White"
+[Console]::BackgroundColor = "Black"
+Clear-Host
 
-Write-Host -ForegroundColor Cyan "Windows10 (Un)Fucker."
+Write-Host -ForegroundColor Yellow @'
+Windows10 Privacy Fixup
+ - 2020 iDigitalFlame
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+'@
+Write-Host -ForegroundColor Red @'
+This will break ALOT of things, YOU HAVE BEEN WARNED!!
+
+'@
+
+If (!$IsAdmin) {
+    Write-Host -ForegroundColor White "Opening an admin version. Please accept the UAC prompt."
+    Start-Process -Wait -Verb RunAs powershell.exe $InvokeMe
+}
 
 New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS -ErrorAction SilentlyContinue | Out-Null
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT -ErrorAction SilentlyContinue | Out-Null
 
 TaskSettings
-StartSettings
 PowerSettings
+FolderSettings
 PackageSettings
 NetworkSettings
 FeatureSettings
 ServiceSettings
 OneDriveSettings
-RegistrySettings
+RegistrySettings $IsAdmin
 RegistryUserSettings
 
 Remove-PSDrive HKU -ErrorAction SilentlyContinue | Out-Null
 Remove-PSDrive HKCR -ErrorAction SilentlyContinue | Out-Null
 
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Write-Host -ForegroundColor Green "Done. Please restart and run one more time!"
+If (!$IsAdmin) {
+    Write-Host -ForegroundColor Green "Done! Please restart to update all settings!"
 }

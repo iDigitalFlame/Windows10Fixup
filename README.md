@@ -1,4 +1,4 @@
-# Windows 10 (Un)Fucker
+# Windows 10 Privacy Fixup
 
 Fixes Windows 10 settings to be more privacy oriented and removes bloat.
 This script is mainly used for VMs and slimline PCs.
@@ -31,7 +31,7 @@ Download the script from here or ```dij.sh/win10``` [Link](https://dij.sh/win10)
 Run the following command:
 
 ```[powershell]
-powershell -ExecutionPolicy Unrestricted -File FixWin10.ps1
+powershell -ExecutionPolicy Unrestricted -File Fixup.ps1
 ```
 
 - or -
