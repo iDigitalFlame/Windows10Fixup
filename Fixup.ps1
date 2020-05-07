@@ -428,9 +428,18 @@ Function OneDriveSettings() {
     Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     mkdir "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
     mkdir "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+    takeown "ClassesRoot" "CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+    takeown "ClassesRoot" "Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 -ErrorAction SilentlyContinue | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 -ErrorAction SilentlyContinue | Out-Null
     Remove-ItemProperty "HKU:\Default\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OneDriveSetup" -Force -ErrorAction SilentlyContinue | Out-Null
+}
+function takeown($root, $key) {
+    $k = [Microsoft.Win32.Registry]::$root.OpenSubKey($key, [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree, [System.Security.AccessControl.RegistryRights]::ChangePermissions)
+    $a = $k1.GetAccessControl()
+    $r = New-Object System.Security.AccessControl.RegistryAccessRule(".\$($env:UserName)", "FullControl", "Allow")
+    $a.SetAccessRule($r)
+    $k.SetAccessControl($a)
 }
 function RegistrySettings($IsAdmin) {
     Write-Host -ForegroundColor Cyan "Adding privacy settings in registry..."
@@ -442,6 +451,7 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\OneDrive"
     mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main"
+    mkdir "HKLM:\System\CurrentControlSet\Control\NetworkProvider"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\CloudContent"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Addons"
@@ -481,6 +491,14 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118\SocialNetworks\FACEBOOK"
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118\SocialNetworks\ABCH-SKYPE"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24"
+    takeown "ClassesRoot" "CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+    takeown "ClassesRoot" "CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}"
+    takeown "ClassesRoot" "CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
+    takeown "ClassesRoot" "CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
+    takeown "LocalMachine" "Software\Wow6432Node\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
+    takeown "LocalMachine" "Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}"
+    takeown "LocalMachine" "Software\Wow6432Node\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+    takeown "LocalMachine" "Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
     ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
         New-Item -ErrorAction SilentlyContinue -Path $("HKCR:\$type\shell\open") -Force | Out-Null
         New-Item -ErrorAction SilentlyContinue -Path $("HKCR:\$type\shell\open\command") | Out-Null
@@ -491,7 +509,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder" -Name "Attributes" -Type DWord 0 -Value 0xA0100000 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Value 0xB0040064 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Value 0xB0940064 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name "IsInstalled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}" -Name "IsInstalled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 0 | Out-Null
@@ -573,7 +591,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\WindowsFirewall\StandardProfile" -Name "EnableFirewall" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xB0040064 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xB0940064 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xA0100000 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1 | Out-Null
@@ -590,6 +608,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\ActionCenter\Quick Actions\All\SystemSettings_Launcher_QuickNote" -Name "Type" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Control\NetworkProvider" -Name "RestoreConnection" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters" -Name "EnablePrefetcher" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\System\CurrentControlSet\Control\Session Manager\Power" -Name "HibernteEnabled" -Type DWord -Value 1 | Out-Null
@@ -652,6 +671,7 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Privacy"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
+    mkdir "$regpath\Software\Classes\CLSID\{031E4825-7B94-4dc3-B131-E946B44C8DD5}"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
@@ -699,6 +719,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Control Panel\International\User Profile" -Name "HttpAcceptLanguageOptOut" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Control Panel\Keyboard" -Name "KeyboardDelay" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Printers\Defaults" -Name "NetID" -Type String -Value "{00000000-0000-0000-0000-000000000000}" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\CLSID\{031E4825-7B94-4dc3-B131-E946B44C8DD5}" -Name "System.IsPinnedToNameSpaceTree" -Type String -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\Main" -Name "DoNotTrack" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\Main" -Name "DisallowDefaultBrowserPrompt" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\User\Default\SearchScopes" -Name "ShowSearchSuggestionsGlobal" -Type DWord -Value 0 | Out-Null
