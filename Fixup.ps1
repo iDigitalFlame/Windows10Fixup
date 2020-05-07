@@ -18,6 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+$IsAdjusted = $false
 $InvokeURL = "https://dij.sh/win10"
 $ErrorActionPreference = "SilentlyContinue"
 $InvokeMe = "-NoProfile -ExecutionPolicy Unrestricted -File `"$PSCommandPath`""
@@ -32,6 +33,49 @@ function mkdir($dir) {
         return
     }
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
+}
+function adjustPrivs {
+    if (!$IsAdmin -or $IsAdjusted) {
+        return
+    }
+    $def = @'
+using System;
+using System.Runtime.InteropServices;
+
+public class AddPrivs
+{
+    [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    internal static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
+    [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    internal static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr phtok);
+    [DllImport("advapi32.dll", SetLastError = true)]
+    internal static extern bool LookupPrivilegeValue(string host, string name, ref long pluid);
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    internal struct TokPriv1Luid {
+      public int Count;
+      public long Luid;
+      public int Attr;
+    }
+
+    public static bool EnablePrivilege(long processHandle, string privilege) {
+        bool retVal;
+        TokPriv1Luid tp;
+        IntPtr hproc = new IntPtr(processHandle);
+        IntPtr htok = IntPtr.Zero;
+        retVal = OpenProcessToken(hproc, 0x00000020|0x00000008, ref htok);
+        tp.Count = 1;
+        tp.Luid = 0;
+        tp.Attr = 0x00000002;
+        retVal = LookupPrivilegeValue(null, privilege, ref tp.Luid);
+        retVal = AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+        return retVal;
+    }
+}
+'@
+    $h = (Get-Process -id $pid).Handle
+    $t = Add-Type $def -PassThru
+    $IsAdjusted = $t[0]::EnablePrivilege($h, "SeTakeOwnershipPrivilege")
 }
 function TaskSettings() {
     Write-Host -ForegroundColor Cyan "Removing un-needed Tasks ..."
@@ -435,6 +479,7 @@ Function OneDriveSettings() {
     Remove-ItemProperty "HKU:\Default\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OneDriveSetup" -Force -ErrorAction SilentlyContinue | Out-Null
 }
 function takeown($root, $key) {
+    adjustPrivs
     $k = [Microsoft.Win32.Registry]::$root.OpenSubKey($key, [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree, [System.Security.AccessControl.RegistryRights]::ChangePermissions)
     $a = $k1.GetAccessControl()
     $r = New-Object System.Security.AccessControl.RegistryAccessRule(".\$($env:UserName)", "FullControl", "Allow")
@@ -493,7 +538,6 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24"
     takeown "ClassesRoot" "CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
     takeown "ClassesRoot" "CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}"
-    takeown "ClassesRoot" "CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
     takeown "ClassesRoot" "CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
     takeown "LocalMachine" "Software\Wow6432Node\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
     takeown "LocalMachine" "Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}"
