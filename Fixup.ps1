@@ -287,6 +287,9 @@ Function PackageSettings() {
 function NetworkSettings() {
     Write-Host -ForegroundColor Cyan "Disabling un-needed network settings..."
     Enable-NetFirewallRule -Name "RemoteDesktop*" -ErrorAction SilentlyContinue | Out-Null
+    Disable-NetAdapterBinding -Name "*" -ComponentID "ms_lldp" -ErrorAction SilentlyContinue | Out-Null
+    Disable-NetAdapterBinding -Name "*" -ComponentID "ms_lltdio" -ErrorAction SilentlyContinue | Out-Null
+    Disable-NetAdapterBinding -Name "*" -ComponentID "ms_rspndr" -ErrorAction SilentlyContinue | Out-Null
     Set-NetConnectionProfile -NetworkCategory Private -ErrorAction SilentlyContinue | Out-Null
     Set-MpPreference -EnableControlledFolderAccess Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force -ErrorAction SilentlyContinue | Out-Null
@@ -294,6 +297,8 @@ function NetworkSettings() {
 }
 function FeatureSettings() {
     Write-Host -ForegroundColor Cyan "Disabling un-needed Features..."
+    Get-WindowsOptionalFeature -Online | Where-Object { $_.FeatureName -eq "Printing-XPSServices-Features" } | Disable-WindowsOptionalFeature -Online -NoRestart -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsOptionalFeature -Online | Where-Object { $_.FeatureName -eq "Printing-PrintToPDFServices-Features" } | Disable-WindowsOptionalFeature -Online -NoRestart -ErrorAction SilentlyContinue | Out-Null
     Enable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Windows-Subsystem-Linux" -NoRestart -ErrorAction SilentlyContinue | Out-Null
     Disable-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-Features" -NoRestart -ErrorAction SilentlyContinue | Out-Null
     Disable-WindowsOptionalFeature -Online -FeatureName "FaxServicesClientPackage" -NoRestart -ErrorAction SilentlyContinue | Out-Null
@@ -489,18 +494,24 @@ function takeown($root, $key) {
 function RegistrySettings($IsAdmin) {
     Write-Host -ForegroundColor Cyan "Adding privacy settings in registry..."
     mkdir "HKLM:\Software\Microsoft\WlanSvc\AnqpCache"
+    mkdir "HKLM:\Software\Policies\Microsoft\AppV\CEIP"
     mkdir "HKLM:\Software\Policies\Microsoft\WindowsStore"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\GameDVR"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\Explorer"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\OneDrive"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\TabletPC"
     mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer"
+    mkdir "HKLM:\Software\Policies\Microsoft\SQMClient\Windows"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\AppCompat"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main"
+    mkdir "HKLM:\Software\Policies\Microsoft\WindowsInkWorkspace"
     mkdir "HKLM:\System\CurrentControlSet\Control\NetworkProvider"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\CloudContent"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Addons"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\CloudContent"
+    mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\Reliability"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\Windows Search"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\DataCollection"
@@ -509,12 +520,14 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Spynet"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate\AU"
+    mkdir "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\DeliveryOptimization"
     mkdir "HKLM:\Software\Wow6432Node\Policies\Microsoft\Windows Defender"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\PhishingFilter"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
     mkdir "HKLM:\Software\Policies\Microsoft\WindowsFirewall\StandardProfile"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\TextInput"
     mkdir "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection"
@@ -523,6 +536,7 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting"
     mkdir "HKLM:\Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder"
     mkdir "HKLM:\Software\Wow6432Node\Policies\Microsoft\Windows Defender\Real-Time Protection"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform"
     mkdir "HKLM:\Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location"
     mkdir "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
@@ -592,13 +606,18 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ShutdownWithoutLogon" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "DisableCAD" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableFirstLogonAnimation" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\WlanSvc\AnqpCache" -Name "OsuRegistrationStatus" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\AppV\CEIP" -Name "CEIPEnable" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer" -Name "DisableFlashInIE" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main" -Name "DisableFirstRunCustomize" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Addons" -Name "FlashPlayerEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\SQMClient\Windows" -Name "CEIPEnable" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\TextInput" -Name "AllowLinguisticDataCollection" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "PUAProtection" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender" -Name "DisableRoutinelyTakingAction" -Type DWord -Value 1 | Out-Null
@@ -608,8 +627,11 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" -Name "EnableNetworkProtection" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access" -Name "EnableControlledFolderAccess" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24" -Name "Category" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" -Name "NoGenTicket" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Reliability" -Name "ShutdownReasonOn" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\AppCompat" -Name "AITEnable" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\AppCompat" -Name "DisableInventory" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1 | Out-Null
@@ -618,6 +640,8 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoNewAppAlert" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\LocationAndSensors" -Name "DisableLocation" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\LocationAndSensors" -Name "DisableLocationScripting" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "DontDisplayNetworkSelectionUI" -Type DWord -Value 1 | Out-Null
@@ -627,12 +651,14 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "UploadUserActivities" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "EnableCdp" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "EnableMmx" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\TabletPC" -Name "PreventHandwritingDataSharing" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoRebootWithLoggedOnUsers" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUPowerManagement" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\WindowsFirewall\StandardProfile" -Name "EnableFirewall" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowSuggestedAppsInWindowsInkWorkspace" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Policies\Microsoft\WindowsStore" -Name "AutoDownload" -Type DWord -Value 2 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "HKLM:\Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xB0940064 | Out-Null
@@ -693,6 +719,12 @@ function RegistrySettings($IsAdmin) {
     Remove-Item -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}" -Recurse -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -Recurse -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\ModernSharing" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -ErrorAction SilentlyContinue | Out-Null
     If ($IsAdmin) {
         $u = New-Object System.Security.Principal.NTAccount($env:UserName)
         RegistryUserSettings $($u.Translate([System.Security.Principal.SecurityIdentifier]).value)
@@ -710,6 +742,8 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Microsoft\InputPersonalization"
     mkdir "$regpath\Software\Microsoft\Personalization\Settings"
     mkdir "$regpath\Software\Policies\Microsoft\Windows\Explorer"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\CDP"
+    mkdir "$regpath\Software\Microsoft\Windows Security Health\State"
     mkdir "$regpath\Software\Microsoft\InputPersonalization\TrainedDataStore"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Privacy"
@@ -718,6 +752,7 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Classes\CLSID\{031E4825-7B94-4dc3-B131-E946B44C8DD5}"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
     mkdir "$regpath\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\AppSync"
@@ -730,6 +765,8 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\DesktopTheme"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\PackageState"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\Accessibility"
+    mkdir "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32"
+    mkdir "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\BrowserSettings"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\Personalization"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\LooselyCoupled"
@@ -769,6 +806,8 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\User\Default\SearchScopes" -Name "ShowSearchSuggestionsGlobal" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\FlipAhead" -Name "FPEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32" -Name "(Default)" -Type "String" -Value "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64" -Name "(Default)" -Type "String" -Value "" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Input\TIPC" -Name "Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1 | Out-Null
@@ -782,11 +821,17 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows NT\CurrentVersion\Sensor\Permissions\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CDP" -Name "RomeSdkChannelUserAuthzPolicy" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-310093Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-314559Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 | Out-Null
@@ -807,6 +852,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewAlphaSelect" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewShadow" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "SharingWizardOn" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 1 | Out-Null
@@ -841,7 +887,9 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\SettingSync\Groups\Windows" -Name "Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "StartUpTab" -Type DWord -Value 5 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Name "ScoobeSystemSettingEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Microsoft\Windows Security Health\State" -Name "AccountProtection_MicrosoftAccount_Disconnected" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Path "$regpath\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "NoTileApplicationNotification" -Type DWord -Value 1 | Out-Null
