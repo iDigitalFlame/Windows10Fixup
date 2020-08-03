@@ -318,6 +318,7 @@ function FeatureSettings() {
 function ServiceSettings() {
     Write-Host -ForegroundColor Cyan "Disabling un-needed Services..."
     Set-Service "ALG" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "Bonjour Service" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "SharedRealitySvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "TapiSvr" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "wmiApSrv" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
