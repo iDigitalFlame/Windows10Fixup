@@ -3,7 +3,7 @@
 #  Fix everything wrong with Windows 10.
 #  Warning, this will break ALOT of things in Windows (like Edge), so be warned.
 #
-# Copyright (C) 2020 iDigitalFlame
+# Copyright (C) 2020 - 2022 iDigitalFlame
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -585,6 +585,18 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xA0100000 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Value 0xB0940064 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmd" -Name "ShowBasedOnVelocityId" -Type DWord -Value 0x639bc8 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmdprompt" -Name "NoWorkingDirectory" -Type String -Value "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmdprompt" -Name "(Default)" -Type String -Value "@shell32.dll,-8506" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmdprompt" -Name "(Default)" -Type String -Value 'cmd.exe /s /k pushd "%V"' | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\cmd" -Name "ShowBasedOnVelocityId" -Type DWord -Value 0x639bc8 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\cmdprompt" -Name "NoWorkingDirectory" -Type String -Value "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\cmdprompt" -Name "(Default)" -Type String -Value "@shell32.dll,-8506" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\cmdprompt\command" -Name "(Default)" -Type String -Value 'cmd.exe /s /k pushd "%V"' | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\PowerShell" -Name "ShowBasedOnVelocityId" -Type DWord -Value 0x639bc8 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Drive\shell\cmdprompt" -Name "NoWorkingDirectory" -Type String -Value "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Drive\shell\cmdprompt" -Name "(Default)" -Type String -Value "@shell32.dll,-8506" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Drive\shell\cmdprompt\command" -Name "(Default)" -Type String -Value 'cmd.exe /s /k pushd "%V"' | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name "IsInstalled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}" -Name "IsInstalled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\PolicyManager\current\device\System" -Name "AllowExperimentation" -Type DWord -Value 0 | Out-Null
@@ -732,6 +744,9 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WinDefend" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WinDefend" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener" -Name "Start" -Type DWord -Value 0 | Out-Null
+    Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmd" -Name "HideBasedOnVelocityId" | Out-Null
+    Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\cmd" -Name "HideBasedOnVelocityId" | Out-Null
+    Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\PowerShell\cmd" -Name "ShowBasedOnVelocityId" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\QualityCompat" -Name "cadca5fe-87d3-4b96-b7fb-a231484277cc" | Out-Null
@@ -1005,7 +1020,7 @@ Clear-Host
 
 Write-Host -ForegroundColor Yellow @'
 Windows10 Privacy Fixup
- - 2020 iDigitalFlame
+ - 2020-2021 iDigitalFlame
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
