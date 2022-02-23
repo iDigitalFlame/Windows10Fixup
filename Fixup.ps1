@@ -158,6 +158,8 @@ function TaskSettings() {
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\Workplace Join\Automatic-Device-Join" | Out-Null
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\WS\License Validation" | Out-Null
     Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\WS\WSTask" | Out-Null
+    Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\Maintenance\WinSAT" | Out-Null
+    Disable-ScheduledTask -ErrorAction SilentlyContinue -TaskName "Microsoft\Windows\Device Information\Device" | Out-Null
 }
 function PowerSettings() {
     Write-Host -ForegroundColor Cyan "Adding better power and disk settings..."
@@ -233,6 +235,7 @@ function PackageSettings() {
     Get-AppxPackage "Microsoft.YourPhone" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.ZuneMusic" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "Microsoft.ZuneVideo" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+    Get-AppxPackage "Microsoft.549981C3F5F10" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "2414FC7A.Viber" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "41038Axilesoft.ACGMediaPlayer" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
     Get-AppxPackage "46928bounde.EclipseManager" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
@@ -280,14 +283,101 @@ function PackageSettings() {
         "OneDrive"
         "Wallet"
     )
-    foreach ($i in $p) {
+    Foreach ($i in $p) {
         $m = (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\Packages" | Where-Object Name -Like "*$i*")
-        foreach ($n in $m) {
+        Foreach ($n in $m) {
             Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:$($n.Name.Substring(18))" -Name "Visibility" -Value 1 | Out-Null
             New-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:$($n.Name.Substring(18))" -Name "DefVis" -PropertyType DWord -Value 2 | Out-Null
             Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:$($n.Name.Substring(18))\Owners" | Out-Null
             dism.exe /Online /Remove-Package /PackageName:$($n.Name.split('\')[-1]) /NoRestart | Out-Null
         }
+    }
+    If ($IsAdmin) {
+        Write-Host -ForegroundColor Cyan "Removing un-needed AppX Packages (AllUsers)..."
+        Get-AppxPackage -AllUsers "Microsoft.3DBuilder" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.AppConnector" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingFinance" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingNews" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingSports" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingTranslator" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingWeather" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.BingTravel" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.CommsPhone" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.GamingServices" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.GetHelp" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Getstarted" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.FreshPaint" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Messaging" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.MicrosoftStickyNotes" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.ScreenSketch" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.MSPaint" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Office.OneNote" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Office.Sway" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.OneConnect" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.People" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Print3D" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.RemoteDesktop" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.SkypeApp" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Wallet" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsAlarms" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsCamera" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "microsoft.windowscommunicationsapps" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsMaps" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsPhone" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Windows.Photos" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.WindowsSoundRecorder" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.YourPhone" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.ZuneMusic" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.ZuneVideo" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "2414FC7A.Viber" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "41038Axilesoft.ACGMediaPlayer" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "46928bounde.EclipseManager" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "4DF9E0F8.Netflix" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "64885BlueEdge.OneCalendar" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "7EE7776C.LinkedInforWindows" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "828B5831.HiddenCityMysteryofShadows" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "89006A2E.AutodeskSketchBook" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "9E2F88E3.Twitter" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "A278AB0D.DisneyMagicKingdoms" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "A278AB0D.MarchofEmpires" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "ActiproSoftwareLLC.562882FEEB491" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "AdobeSystemsIncorporated.AdobePhotoshopExpress" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "CAF9E577.Plex" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "D52A8D61.FarmVille2CountryEscape" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "D5EA27B7.Duolingo-LearnLanguagesforFree" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "DB6EA5DB.CyberLinkMediaSuiteEssentials" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "DolbyLaboratories.DolbyAccess" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Drawboard.DrawboardPDF" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Facebook.Facebook" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "flaregamesGmbH.RoyalRevolt2" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "GAMELOFTSA.Asphalt8Airborne" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "KeeperSecurityInc.Keeper" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "king.com.BubbleWitch3Saga" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "king.com.CandyCrushSodaSaga" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "PandoraMediaInc.29680B314EFC2" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "SpotifyAB.SpotifyMusic" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "WinZipComputing.WinZipUniversal" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "XINGAG.XING" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "king.com.*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.XboxApp" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.XboxIdentityProvider" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.XboxSpeechToTextOverlay" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.XboxGameOverlay" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.XboxGamingOverlay" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers "Microsoft.Xbox.TCUI" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+        Get-AppxPackage -AllUsers | where-Object { !$_.Publisher.Contains("CN=Microsoft ") } | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
     }
 }
 function NetworkSettings() {
@@ -315,11 +405,24 @@ function FeatureSettings() {
     Disable-WindowsOptionalFeature -Online -NoRestart -ErrorAction SilentlyContinue -FeatureName "Printing-XPSServices-Features" | Out-Null
     Disable-WindowsOptionalFeature -Online -NoRestart -ErrorAction SilentlyContinue -FeatureName "Printing-PrintToPDFServices-Features" | Out-Null
     Disable-WindowsOptionalFeature -Online -NoRestart -ErrorAction SilentlyContinue -FeatureName "Internet-Explorer-Optional-$env:PROCESSOR_ARCHITECTURE" | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("App.Support.QuickAssist") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Browser.InternetExplorer") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Hello.Face.") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Language.Handwriting") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Language.OCR") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Language.Speech") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Language.TextToSpeech") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("MathRecognizer") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Microsoft.Windows.PowerShell.ISE") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Microsoft.Windows.WordPad") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("OneCoreUAP.OneSync") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
+    Get-WindowsCapability -Online | Where-Object { $_.Name.Contains("Print.Fax.Scan") } | Remove-WindowsCapability -Online -ErrorAction SilentlyContinue | Out-Null
     Remove-Printer -ErrorAction SilentlyContinue -Name "Fax" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Accessories\Quick Assist.lnk" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Accessories\Windows Fax and Scan.lnk" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Accessories\Wordpad.lnk" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "C:\Programdata\Microsoft\Windows\Start Menu\Programs\MiracastView.lnk" | Out-Null
+    Start-Process -Wait -FilePath "C:\Program Files (x86)\Microsoft\Edge\Application\*\Installer\setup.exe" -ArgumentList @("--uninstall", "--system-level", "--force-uninstall") -ErrorAction SilentlyContinue | Out-Null
 }
 function ServiceSettings() {
     Write-Host -ForegroundColor Cyan "Disabling un-needed Services..."
@@ -343,7 +446,8 @@ function ServiceSettings() {
     Set-Service "lltdsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "SecurityHealthService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "EntAppSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "AppReadiness" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+    # NOTE(dij): Breaks Windows Update
+    Set-Service "AppReadiness" -StartupType Manual -ErrorAction SilentlyContinue | Out-Null
     Set-Service "CDPSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "BthAvctpSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AudioEndpointBuilder" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -501,9 +605,73 @@ function takeown($root, $key) {
 }
 function RegistrySettings($IsAdmin) {
     Write-Host -ForegroundColor Cyan "Adding privacy settings in registry..."
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\AppCompat"
+    mkdir "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Personalization"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\CredUI"
+    mkdir "HKLM:\Software\Policies\Microsoft\MRT"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Windows Error Reporting"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Device Metadata"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\SettingSync"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\DataCollection"
+    mkdir "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    mkdir "HKLM:\Software\Policies\Microsoft\PushToInstall"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\contacts"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCallHistory"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\email"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\SmartGlass"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Windows Search"
+    mkdir "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\ABCH"
+    mkdir "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\ABCH-SKYPE"
+    mkdir "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\FACEBOOK"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\AppHost"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Windows Feeds"
+    mkdir "HKLM:\System\CurrentControlSet\Services\DiagTrack"
+    mkdir "HKLM:\System\CurrentControlSet\Services\diagnosticshub.standardcollector.service"
+    mkdir "HKLM:\System\CurrentControlSet\Services\dmwappushservice"
+    mkdir "HKLM:\System\CurrentControlSet\Services\DoSvc"
+    mkdir "HKLM:\System\CurrentControlSet\Services\lfsvc"
+    mkdir "HKLM:\System\CurrentControlSet\Services\WbioSrvc"
+    mkdir "HKLM:\System\CurrentControlSet\Services\WSearch"
+    mkdir "HKLM:\Software\Policies\Microsoft\Edge"
+    mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter"
+    mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer\Suggested Sites"
+    mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer\Geolocation"
+    mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer\Infodelivery\Restrictions"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Onedrive"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\ActionCenter\Quick Actions\All\SystemSettings_Launcher_QuickNote"
+    mkdir "HKLM:\Software\Microsoft\WindowsUpdate\UX\Settings"
+    mkdir "HKLM:\Software\Policies\Microsoft\Biometrics"
+    mkdir "HKLM:\System\CurrentControlSet\Services\SysMain"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\System"
+    mkdir "HKLM:\Software\Microsoft\Dfrg\BootOptimizeFunction"
+    mkdir "HKLM:\System\CurrentControlSet\Control\CrashControl"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\OOBE"
+    mkdir "HKLM:\Software\Microsoft\Windows Defender Security Center\Virus and threat protection"
+    mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Notifications\Data"
     mkdir "HKLM:\Software\Policies\Google\Chrome"
     mkdir "HKLM:\Software\Policies\Microsoft\Edge"
     mkdir "HKLM:\Software\Policies\Mozilla\Firefox"
+    mkdir "HKLM:\Software\Microsoft\EdgeUpdate"
+    mkdir "HKLM:\Software\WOW6432Node\Microsoft\EdgeUpdate"
     mkdir "HKLM:\Software\Policies\Microsoft\WMDRM"
     mkdir "HKLM:\Software\Microsoft\WlanSvc\AnqpCache"
     mkdir "HKLM:\Software\Policies\Microsoft\AppV\CEIP"
@@ -545,6 +713,7 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\TextInput"
     mkdir "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration"
+    mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device”
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config"
@@ -581,10 +750,15 @@ function RegistrySettings($IsAdmin) {
         Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1" | Out-Null
     }
     Set-Item "HKLM:\Software\Classes\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" | Out-Null
+    New-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\Network\NewNetworkWindowOff" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device” -Name "DevicePasswordLessBuildVersion" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\WOW6432Node\Microsoft\EdgeUpdate" -Name "DoNotUpdateToEdgeWithChromium" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\EdgeUpdate" -Name "DoNotUpdateToEdgeWithChromium" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\Network" -Name "NewNetworkWindowOff" -Type DWord -Value 0xB0940064 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xA0100000 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Value 0xB0940064 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}\ShellFolder" -Name "Attributes" -Type DWord -Value 0xB0940064 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmd" -Name "ShowBasedOnVelocityId" -Type DWord -Value 0x639bc8 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmdprompt" -Name "NoWorkingDirectory" -Type String -Value "" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmdprompt" -Name "(Default)" -Type String -Value "@shell32.dll,-8506" | Out-Null
@@ -623,7 +797,6 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack" -Name "DiagTrackAuthorization" -Type DWord -Value 7 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "DisableEdgeDesktopShortcutCreation" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "SpecialRoamingOverrideAllowed" -Type DWord -Value 0 | Out-Null
@@ -632,7 +805,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "SettingsPageVisibility" -Type String -Value "hide:appsfeatures;appsforwebsites;autoplay;backup;clipboard;cortana;cortana-language;cortana-moredetails;cortana-permissions;cortana-windowssearch;crossdevice;datausage;delivery-optimization;extras;findmydevice;fonts;maps;mobile-devices;network-cellular;network-dialup;network-directaccess;network-mobilehotspot;network-proxy;network-status;network-vpn;nfctransactions;otherusers;pen;privacy-accountinfo;privacy-activityhistory;privacy-backgroundapps;privacy-calendar;privacy-callhistory;privacy-contacts;privacy-customdevices;privacy-email;privacy-feedback;privacy-general;privacy-location;privacy-messaging;privacy-motion;privacy-radios;privacy-speech;privacy-speechtyping;quiethours;recovery;regionlanguage;remotedesktop;search;search-moredetails;storagesense;sync;themes;troubleshoot;usb;workplace;privacy-documents;privacy-videos;privacy-pictures;privacy-appdiagnostics;privacy-phonecalls;privacy-notifications;privacy-voiceactivation;privacy-tasks;privacy-automaticfiledownloads;project;developers;search-permissions;powersleep;windowsdefender;signinoptions;emailandaccounts;" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "SettingsPageVisibility" -Type String -Value "hide:appsfeatures;appsforwebsites;autoplay;backup;clipboard;cortana;cortana-language;cortana-moredetails;cortana-permissions;cortana-windowssearch;crossdevice;datausage;delivery-optimization;extras;findmydevice;fonts;maps;mobile-devices;network-cellular;network-dialup;network-directaccess;network-mobilehotspot;network-proxy;network-status;network-vpn;nfctransactions;otherusers;pen;privacy-accountinfo;privacy-activityhistory;privacy-backgroundapps;privacy-calendar;privacy-callhistory;privacy-contacts;privacy-customdevices;privacy-email;privacy-feedback;privacy-general;privacy-location;privacy-messaging;privacy-motion;privacy-radios;privacy-speech;privacy-speechtyping;quiethours;recovery;regionlanguage;remotedesktop;search;search-moredetails;storagesense;sync;themes;troubleshoot;usb;workplace;privacy-documents;privacy-videos;privacy-pictures;privacy-appdiagnostics;privacy-phonecalls;privacy-notifications;privacy-voiceactivation;privacy-tasks;privacy-automaticfiledownloads;project;developers;search-permissions;powersleep;windowsdefender;signinoptions;emailandaccounts;tabletmode;network;speech;" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ShutdownWithoutLogon" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "DisableCAD" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections" -Type DWord -Value 1 | Out-Null
@@ -734,16 +907,115 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Sense" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Sense" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\wscsvc" -Name "Start" -Type DWord -Value 4 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\mpssvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    # NOTE(dij): Apperently disabling these services fuck up the ability for Windows to download apps or updates.
+    #            That's not good!
+    #
+    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
+    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\wscsvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\mpssvc" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\PcaSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\SecurityHealthService" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules" -Name "{2765E0F4-2918-4A46-B9C9-43CDD8FCBA2B}" -Type String -Value "BlockCortana|Action=Block|Active=TRUE|Dir=Out|App=C:\windows\systemapps\microsoft.windows.cortana_cw5n1h2txyewy\searchui.exe|Name=Search and Cortana application|AppPkgId=S-1-15-2-1861897761-1695161497-2927542615-642690995-327840285-2659745135-2630312742|" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WinDefend" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WinDefend" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener" -Name "Start" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\AppCompat" -Name "AllowTelemetry" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack" -Name "DiagTrackAuthorization" -Type DWord -Value 7 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\CredUI" -Name "DisablePasswordReveal" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\MRT" -Name "DontReportInfectionInformation" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Error Reporting" -Name "AutoApproveOSDumps" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Error Reporting" -Name "DontSendAdditionalData" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Device Metadata" -Name "PreventDeviceMetadataFromNetwork" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\SettingSync" -Name "DisableSettingSync" -Type DWord -Value 2 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\SettingSync" -Name "DisableSettingSyncUserOverride" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\DataCollection" -Name "DisableTelemetryOptInChangeNotification" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\PushToInstall" -Name "DisablePushToInstall" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\contacts" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCallHistory" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\email" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\SmartGlass" -Name "UserAuthPolicy" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\SmartGlass" -Name "BluetoothPolicy" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" -Name "AllowSearchToUseLocation" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Search" -Name "ConnectedSearchUseWeb" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001" -Name "FeatureStates" -Type DWord -Value 892 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\ABCH" -Name "OptInStatus" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\ABCH-SKYPE" -Name "OptInStatus" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\FACEBOOK" -Name "OptInStatus" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "Off" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoThumbnailCache" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "DisableThumbnailCache" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableThumbsDBOnNetworkFolders" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoInstrumentation" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Windows Feeds" -Name "EnableFeeds" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\DiagTrack" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\diagnosticshub.standardcollector.service" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\dmwappushservice" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\DoSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\lfsvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WbioSrvc" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableBehaviorMonitoring" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableOnAccessProtection" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" -Name "DisableScanOnRealtimeEnable" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WSearch" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "ConfigureDoNotTrack" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SmartScreenEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "NetworkPredictionOptions" -Type DWord -Value 2 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SearchSuggestEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AutofillAddressEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "ResolveNavigationErrorsUseWebService" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AlternateErrorPagesEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SendSiteInfoToImproveServices" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "PersonalizationReportingEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "MetricsReportingEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "PaymentMethodQueryEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AddressBarMicrosoftSearchInBingProviderEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "UserFeedbackAllowed" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "BlockThirdPartyCookies" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "TrackingPrevention" -Type DWord -Value 3 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "DefaultGeolocationSetting" -Type DWord -Value 3 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Suggested Sites" -Name "Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer" -Name "AllowServicePoweredQSA" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Geolocation" -Name "PolicyDisableGeolocation" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Infodelivery\Restrictions" -Name "NoUpdateCheck" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Onedrive" -Name "DisableLibrariesDefaultSaveToOneDrive" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Onedrive" -Name "DisableFileSync" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Onedrive" -Name "DisableMeteredNetworkFileSync" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\ActionCenter\Quick Actions\All\SystemSettings_Launcher_QuickNote" -Name "Type" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Biometrics" -Name "Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\SysMain" -Name "Start" -Type DWord -Value 4 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "VerboseStatus" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\System" -Name "AllowBlockingAppsAtShutdown" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Dfrg\BootOptimizeFunction" -Name "Enable" -Type String -Value N | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\CrashControl" -Name "DisplayParameters" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient" -Name "DisableSmartNameResolution" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\OOBE" -Name "DisablePrivacyExperience" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Defender Security Center\Virus and threat protection" -Name "SummaryNotificationDisabled" -TypeDWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Notifications\Data" -Name "418A073AA3BC3475" -Type Binary -Value ([byte[]](62, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 1, 2, 4, 0)) | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control" -Name "WaitToKillServiceTimeout" -Type String -Value "1000" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmd" -Name "HideBasedOnVelocityId" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shell\cmd" -Name "HideBasedOnVelocityId" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\PowerShell\cmd" -Name "ShowBasedOnVelocityId" | Out-Null
@@ -790,6 +1062,8 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Microsoft\Clipboard"
     mkdir "$regpath\Software\Microsoft\Input\TIPC"
     mkdir "$regpath\Software\Microsoft\Siuf\Rules"
+    mkdir "$regpath\Software\Microsoft\Narrator\NoRoam"
+    mkdir "$regpath\Software\Microsoft\WindowsMitigation"
     mkdir "$regpath\Software\Microsoft\InputPersonalization"
     mkdir "$regpath\Software\Microsoft\MediaPlayer\Preferences"
     mkdir "$regpath\Software\Policies\Microsoft\Office\15.0\osm"
@@ -797,9 +1071,16 @@ function RegistryUserSettings($uid = "") {
     mkdir "$regpath\Software\Microsoft\Personalization\Settings"
     mkdir "$regpath\Software\Policies\Microsoft\Windows\Explorer"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\CDP"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\SearchSettings"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\ImmersiveShell"
     mkdir "$regpath\Software\Policies\Microsoft\WindowsMediaPlayer"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Search"
     mkdir "$regpath\Software\Microsoft\Windows Security Health\State"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\UserChosenExecuteHandlers\StorageOnArrival"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlersDefaultSelection\StorageOnArrival"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\UserChosenExecuteHandlers\CameraAlternate\ShowPicturesOnArrival"
+    mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlersDefaultSelection\CameraAlternate\ShowPicturesOnArrival"
+    mkdir "$regpath\Software\Microsoft\Windows NT\CurrentVersion\Windows"
     mkdir "$regpath\Software\Microsoft\InputPersonalization\TrainedDataStore"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
     mkdir "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
@@ -871,6 +1152,14 @@ function RegistryUserSettings($uid = "") {
         Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path $_.PsPath -Name "Disabled" -Type DWord -Value 1 | Out-Null
         Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path $_.PsPath -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
     }
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Narrator\NoRoam" -Name "WinEnterLaunchEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\WindowsMitigation" -Name "UserPreference" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\SearchSettings" -Name "SafeSearchMode" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\SearchSettings" -Name "IsDeviceSearchHistoryEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\UserChosenExecuteHandlers\StorageOnArrival" -Name "(Default)" -Type String -Value "MSTakeNoAction" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlersDefaultSelection\StorageOnArrival" -Name "(Default)" -Type String -Value "MSTakeNoAction" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\UserChosenExecuteHandlers\CameraAlternate\ShowPicturesOnArrival" -Name "(Default)" -Type String -Value "MSTakeNoAction" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\EventHandlersDefaultSelection\CameraAlternate\ShowPicturesOnArrival" -Name "(Default)" -Type String -Value "MSTakeNoAction" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Accessibility\Keyboard Response" -Name "Flags" -Type String -Value "122" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Accessibility\ToggleKeys" -Name "Flags" -Type String -Value "58" | Out-Null
@@ -887,8 +1176,8 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\User\Default\SearchScopes" -Name "ShowSearchSuggestionsGlobal" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\FlipAhead" -Name "FPEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\microsoft.microsoftedge_8wekyb3d8bbwe\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32" -Name "(Default)" -Type "String" -Value "" | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64" -Name "(Default)" -Type "String" -Value "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32" -Name "(Default)" -Type String -Value "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64" -Name "(Default)" -Type String -Value "" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Clipboard" -Name "EnableClipboardHistory" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Input\TIPC" -Name "Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1 | Out-Null
@@ -904,30 +1193,31 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows NT\CurrentVersion\Sensor\Permissions\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "SignInMode" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Name "GlobalUserDisabled" -Type DWord -Value 1 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCallHistory" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\contacts" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\email" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\activity" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener" -Type String -Name "Value" -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetooth" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetoothSync" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\cellularData" -Name "Value" -Type String -Value Deny | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\gazeInput" -Name "Value" -Type String -Value Deny | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCallHistory" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\contacts" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\email" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\activity" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener" -Type String -Name "Value" -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetooth" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetoothSync" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\cellularData" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\gazeInput" -Name "Value" -Type String -Value "Deny" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CDP" -Name "RomeSdkChannelUserAuthzPolicy" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
@@ -958,6 +1248,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewAlphaSelect" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewShadow" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MultiTaskingAltTabFilter" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "SharingWizardOn" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0 | Out-Null
@@ -976,6 +1267,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name "VisualFXSetting" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Privacy" -Name "TailoredExperiencesWithDiagnosticDataEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "NoToastApplicationNotification" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "ConfirmFileDelete" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0 | Out-Null
@@ -1009,7 +1301,102 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\WindowsMediaPlayer" -Name "PreventMusicFileMetadataRetrieval" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\WindowsMediaPlayer" -Name "PreventRadioPresetsRetrieval" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Wow6432Node\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\International\User Profile" -Name "HttpAcceptLanguageOptOut" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Personalization\Settings" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Siuf\Rules" -Name "PeriodInNanoSeconds" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353698Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\LooselyCoupled" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\{52079E78-A92B-413F-B213-E8FE35712E72}" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\contacts" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCallHistory" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\email" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\{A8804298-2D5F-42E3-9531-9C8C39EB29CE}" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\{2297E4E2-5DBE-466D-A12B-0F8286F0D9CA}" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Name "GlobalUserDisabled" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios" -Name "Value" -Type String -Value "Deny" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "NoThumbnailCache" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "DisableThumbnailCache" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" -Name "PeopleBand" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "HideSCAMeetNow" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Feeds" -Name "ShellFeedsTaskbarViewMode" -Type DWord -Value 2 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoComplete" -Name "AutoSuggest" -Type String -Value "no" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "ConfigureDoNotTrack" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "SmartScreenEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "NetworkPredictionOptions" -Type DWord -Value 2 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "SearchSuggestEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "AutofillAddressEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "ResolveNavigationErrorsUseWebService" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "AlternateErrorPagesEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "SendSiteInfoToImproveServices" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "PersonalizationReportingEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "MetricsReportingEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "PaymentMethodQueryEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "AutofillCreditCardEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "AddressBarMicrosoftSearchInBingProviderEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "UserFeedbackAllowed" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "BlockThirdPartyCookies" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "TrackingPrevention" -Type DWord -Value 3 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "SyncDisabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Policies\Microsoft\Edge" -Name "DefaultGeolocationSetting" -Type DWord -Value 3 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\Main" -Name "DoNotTrack" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\Main" -Name "Use FormSuggest" -Type String -Value "no" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\Main" -Name "FormSuggest PW Ask" -Type String -Value "no" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\IntelliForms" -Name "AskUser" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\SearchScopes" -Name "ShowSearchSuggestionsInAddressGlobal" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\AutoComplete" -Name "Append Completion" -Type String -Value "no" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Internet Explorer\Main" -Name "HideNewEdgeButton" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Name "System.IsPinnedToNameSpaceTree" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\OneDrive" -Name "DisablePersonalSync" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Desktop" -Name "AutoEndTasks" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Windows.Photos_8wekyb3d8bbwe" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsCalculator_8wekyb3d8bbwe" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\windows.immersivecontrolpanel_cw5n1h2txyewy" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.MicrosoftEdge.Stable_8wekyb3d8bbwe" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.MSPaint_8wekyb3d8bbwe" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Windows.SecHealthUI_cw5n1h2txyewy" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsStore_8wekyb3d8bbwe" -Name "DisabledByUser" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows NT\CurrentVersion\Windows" -Name "LegacyDefaultPrinterMode" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Desktop" -Name "AutoEndTasks" -Type String -Value "1" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Desktop" -Name "HungAppTimeout" -Type String -Value "1000" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Desktop" -Name "MenuShowDelay" -Type String -Value "0" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Desktop" -Name "WaitToKillAppTimeout" -Type String -Value "2000" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Control Panel\Desktop" -Name "LowLevelHooksTimeout" -Type String -Value "1000" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoLowDiskSpaceChecks" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "LinkResolveIgnoreLinkInfo" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoResolveSearch" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoResolveTrack" -Type DWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoInternetOpenWith" -Type DWord -Value 1 | Out-Null
     Remove-ItemProperty -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Name "FavoritesResolve" -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" -Recurse -ErrorAction SilentlyContinue | Out-Null
 }
@@ -1020,7 +1407,7 @@ Clear-Host
 
 Write-Host -ForegroundColor Yellow @'
 Windows10 Privacy Fixup
- - 2020-2021 iDigitalFlame
+ - 2020 - 2022 iDigitalFlame
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1073,6 +1460,15 @@ ServiceSettings
 OneDriveSettings
 RegistrySettings $IsAdmin
 RegistryUserSettings
+
+If ($IsAdmin) {
+    New-Item -ItemType Directory -Path "$env:TEMP\vive" -ErrorAction SilentlyContinue | Out-Null
+    Invoke-WebRequest -Uri "https://github.com/thebookisclosed/ViVe/releases/download/v0.2.1/ViVeTool-v0.2.1.zip" -OutFile "$env:TEMP\vive\vive.zip" -ErrorAction SilentlyContinue | Out-Null
+    Expand-Archive -LiteralPath "$env:TEMP\vive\vive.zip" -DestinationPath "$env:TEMP\vive\"  -ErrorAction SilentlyContinue | Out-Null
+    Start-Process -Wait -FilePath "$env:TEMP\vive\ViVeTool.exe" -ArgumentList @("addconfig", "31950543", "1") -ErrorAction SilentlyContinue | Out-Null
+    Start-Process -Wait -FilePath "$env:TEMP\vive\ViVeTool.exe" -ArgumentList @("addconfig", "18299130", "1") -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Path "$env:TEMP\vive" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+}
 
 Remove-PSDrive HKU -ErrorAction SilentlyContinue | Out-Null
 Remove-PSDrive HKCR -ErrorAction SilentlyContinue | Out-Null
