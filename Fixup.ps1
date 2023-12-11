@@ -446,8 +446,8 @@ function ServiceSettings() {
     Set-Service "lltdsvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "SecurityHealthService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "EntAppSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-    # NOTE(dij): Breaks Windows Update
     Set-Service "AppReadiness" -StartupType Manual -ErrorAction SilentlyContinue | Out-Null
+    Set-Service "NlaSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "CDPSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "BthAvctpSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AudioEndpointBuilder" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
