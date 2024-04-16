@@ -447,7 +447,6 @@ function ServiceSettings() {
     Set-Service "SecurityHealthService" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "EntAppSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AppReadiness" -StartupType Manual -ErrorAction SilentlyContinue | Out-Null
-    Set-Service "NlaSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "CDPSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "BthAvctpSvc" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
     Set-Service "AudioEndpointBuilder" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
@@ -634,7 +633,6 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall"
-    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\Windows Search"
     mkdir "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\ABCH"
     mkdir "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-2690168419-1548080425-1981415874-1001\SocialNetworks\ABCH-SKYPE"
@@ -668,7 +666,6 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\Windows Defender Security Center\Virus and threat protection"
     mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Notifications\Data"
     mkdir "HKLM:\Software\Policies\Google\Chrome"
-    mkdir "HKLM:\Software\Policies\Microsoft\Edge"
     mkdir "HKLM:\Software\Policies\Mozilla\Firefox"
     mkdir "HKLM:\Software\Microsoft\EdgeUpdate"
     mkdir "HKLM:\Software\WOW6432Node\Microsoft\EdgeUpdate"
@@ -676,7 +673,6 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\WlanSvc\AnqpCache"
     mkdir "HKLM:\Software\Policies\Microsoft\AppV\CEIP"
     mkdir "HKLM:\Software\Policies\Microsoft\WindowsStore"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows\System"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\GameDVR"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\Explorer"
@@ -684,21 +680,15 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\TabletPC"
     mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer"
     mkdir "HKLM:\Software\Policies\Microsoft\SQMClient\Windows"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows\AppCompat"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main"
     mkdir "HKLM:\Software\Policies\Microsoft\WindowsInkWorkspace"
     mkdir "HKLM:\System\CurrentControlSet\Control\NetworkProvider"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\CloudContent"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient"
     mkdir "HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Addons"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows\CloudContent"
     mkdir "HKLM:\Software\Policies\Microsoft\InputPersonalization"
     mkdir "HKLM:\Software\Microsoft\Windows\Windows Error Reporting"
     mkdir "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\Reliability"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Windows Search"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows\DataCollection"
-    mkdir "HKLM:\Software\Policies\Microsoft\Windows\Personalization"
     mkdir "HKLM:\Software\Microsoft\WcmSvc\wifinetworkmanager\config"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows\AdvertisingInfo"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Spynet"
@@ -713,8 +703,9 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\TextInput"
     mkdir "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration"
-    mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device”
+    mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+    mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config"
     mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings"
@@ -736,6 +727,85 @@ function RegistrySettings($IsAdmin) {
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118\SocialNetworks\FACEBOOK"
     mkdir "HKLM:\Software\Wow6432Node\Microsoft\WcmSvc\wifinetworkmanager\features\S-1-5-21-966265688-3624610909-2545133441-1118\SocialNetworks\ABCH-SKYPE"
     mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24"
+    mkdir "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations"
+    mkdir "HKCR:\SystemFileAssociations\image\shell\Image Preview\DropTarget"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows\StorageSense"
+    mkdir "HKCR:\Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder"
+    mkdir "HKLM:\System\Maps"
+    mkdir "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget"
+    mkdir "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilitie"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Bitmap\shell\open\DropTarget"
+    mkdir "HKCR:\Applications\photoviewer.dll\shell\print\DropTarget"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.JFIF\shell\open\DropTarget"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Jpeg\shell\open\DropTarget"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Gif\shell\open\DropTarget"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Png\shell\open\DropTarget"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Wdp\shell\open\DropTarget"
+    mkdir "HKCR:\Applications\photoviewer.dll\shell\open\command"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Bitmap\shell\open\command"
+    mkdir "HKCR:\Applications\photoviewer.dll\shell\print\command"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.JFIF\shell\open\command"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Jpeg\shell\open\command"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Gif\shell\open\command"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Png\shell\open\command"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Wdp\shell\open\command"
+    mkdir "HKCR:\SystemFileAssociations\image\shell\Image Preview\command"
+    mkdir "HKLM:\Software\\Microsoft\Windows NT\CurrentVersion\Accessibility"
+    mkdir "HKLM:\System\CurrentControlSet\Control\TimeZoneInformation"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Bitmap\DefaultIcon"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.JFIF\DefaultIcon"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Jpeg\DefaultIcon"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Gif\DefaultIcon"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Png\DefaultIcon"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Wdp\DefaultIcon"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\Device Installer"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server"
+    mkdir "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client"
+    mkdir "HKLM:\System\CurrentControlSet\Services\Tcpip6\Parameters"
+    mkdir "HKLM:\System\CurrentControlSet\Services\Tcpip\Parameters"
+    mkdir "HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters"
+    mkdir "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.JFIF"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Jpeg"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Wdp"
+    mkdir "HKLM:\Software\Microsoft\Windows Script Host\Settings"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Bitmap"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Gif"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Png"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows Defender Security Center\Systray"
+    mkdir "HKLM:\Software\Microsoft\Windows\CurrentVersion\OEMInformation"
+    mkdir "HKCR:\Applications\photoviewer.dll\shell\open"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.JFIF\shell\open"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Jpeg\shell\open"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Gif\shell\open"
+    mkdir "HKCR:\PhotoViewer.FileAssoc.Wdp\shell\open"
+    mkdir "HKCR:\Applications\photoviewer.dll\shell\print"
+    mkdir "HKLM:\System\CurrentControlSet\Services\NetBT\Parameters"
+    mkdir "HKLM:\System\CurrentControlSet\Services\Netbt\Parameters"
+    mkdir "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint"
+    mkdir "HKLM:\System\CurrentControlSet\Control\Lsa"
+    mkdir "HKLM:\Software\Microsoft\.NETFramework\v2.0.50727"
+    mkdir "HKLM:\Software\Microsoft\.NETFramework\v3.0"
+    mkdir "HKLM:\Software\Microsoft\.NETFramework\v4.0.30319"
+    mkdir "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v2.0.50727"
+    mkdir "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v3.0"
+    mkdir "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v4.0.30319"
+    mkdir "HKLM:\System\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener"
+    mkdir "HKLM:\System\ControlSet001\Services\PcaSvc"
+    mkdir "HKLM:\System\CurrentControlSet\Services\PcaSvc\Start"
+    mkdir "HKCR:\Software\Wow6432Node\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
+    mkdir "HKLM:\Software\Microsoft\Windows Defender\Features"
+    mkdir "HKLM:\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"
     takeown "ClassesRoot" "CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
     takeown "ClassesRoot" "CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}"
     takeown "ClassesRoot" "CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
@@ -743,15 +813,115 @@ function RegistrySettings($IsAdmin) {
     takeown "LocalMachine" "Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}"
     takeown "LocalMachine" "Software\Wow6432Node\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
     takeown "LocalMachine" "Software\Wow6432Node\Classes\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}"
+    New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS -ErrorAction SilentlyContinue | Out-Null
+    New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT -ErrorAction SilentlyContinue | Out-Null
     ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
+        mkdir $("HKCR:\$type\shell\open\command")
         New-Item -ErrorAction SilentlyContinue -Force -Path $("HKCR:\$type\shell\open") | Out-Null
         New-Item -ErrorAction SilentlyContinue -Force -Path $("HKCR:\$type\shell\open\command") | Out-Null
         Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043" | Out-Null
         Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1" | Out-Null
     }
-    Set-Item "HKLM:\Software\Classes\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" | Out-Null
     New-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\Network\NewNetworkWindowOff" | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device” -Name "DevicePasswordLessBuildVersion" -Type DWord -Value 0 | Out-Null
+    Set-Item "HKLM:\Software\Classes\CLSID\{09A47860-11B0-4DA5-AFA5-26D86198A780}\InprocServer32" "" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\Network\NewNetworkWindowOff" -Name "(Default)" -Value "" -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".bmp" -Value 'PhotoViewer.FileAssoc.Bitmap' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".cr2" -Value 'PhotoViewer.FileAssoc.Tiff' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".dib" -Value 'PhotoViewer.FileAssoc.Bitmap' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".gif" -Value 'PhotoViewer.FileAssoc.Gif' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".jfif" -Value 'PhotoViewer.FileAssoc.JFIF' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".jpe" -Value 'PhotoViewer.FileAssoc.Jpeg' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".jpeg" -Value 'PhotoViewer.FileAssoc.Jpeg' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".jpg" -Value 'PhotoViewer.FileAssoc.Jpeg' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".jxr" -Value 'PhotoViewer.FileAssoc.Wdp' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".png" -Value 'PhotoViewer.FileAssoc.Png' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".tif" -Value 'PhotoViewer.FileAssoc.Tiff' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".tiff" -Value 'PhotoViewer.FileAssoc.Tiff' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations" -Name ".wdp" -Value 'PhotoViewer.FileAssoc.Wdp' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\SystemFileAssociations\image\shell\Image Preview\DropTarget" -Name "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}" -Value '' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\StorageSense" -Name "AllowStorageSenseGlobal" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities" -Name "ApplicationDescription" -Value '@%ProgramFiles%\\Windows Photo Viewer\\photoviewer.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Photo Viewer\Capabilities" -Name "ApplicationName" -Value '@%ProgramFiles%\\Windows Photo Viewer\\photoviewer.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Software\Wow6432Node\CLSID\{679f85cb-0220-4080-b29b-5540cc05aab6}\ShellFolder" -Name "Attributes" -Value 2685403136 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\Maps" -Name "AutoUpdateEnabled" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Value '{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Bitmap\shell\open\DropTarget" -Name "Clsid" -Value '{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Applications\photoviewer.dll\shell\print\DropTarget" -Name "Clsid" -Value '{60fd46de-f830-4894-a628-6fa81bc0190d}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF\shell\open\DropTarget" -Name "Clsid" -Value '{60fd46de-f830-4894-a628-6fa81bc0190d}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg\shell\open\DropTarget" -Name "Clsid" -Value '{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Gif\shell\open\DropTarget" -Name "Clsid" -Value '{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Png\shell\open\DropTarget" -Name "Clsid" -Value '{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Wdp\shell\open\DropTarget" -Name "Clsid" -Value '{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Bitmap\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Applications\photoviewer.dll\shell\print\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Gif\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Png\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Wdp\shell\open\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\SystemFileAssociations\image\shell\Image Preview\command" -Name "(Default)" -Value '%SystemRoot%\System32\rundll32.exe "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\\Microsoft\Windows NT\CurrentVersion\Accessibility" -Name "Configuration" -Value '2' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\TimeZoneInformation" -Name "DaylightName" -Value '@tzres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Bitmap\DefaultIcon" -Name "(Default)" -Value '%SystemRoot%\\System32\\imageres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF\DefaultIcon" -Name "(Default)" -Value '%SystemRoot%\\System32\\imageres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg\DefaultIcon" -Name "(Default)" -Value '%SystemRoot%\\System32\\imageres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Gif\DefaultIcon" -Name "(Default)" -Value '%SystemRoot%\System32\imageres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Png\DefaultIcon" -Name "(Default)" -Value '%SystemRoot%\System32\imageres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Wdp\DefaultIcon" -Name "(Default)" -Value '%SystemRoot%\\System32\\wmphoto.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Device Installer" -Name "DisableCoInstallers" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Tcpip6\Parameters" -Name "DisabledComponents" -Value 47 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Tcpip6\Parameters" -Name "DisableIPSourceRouting" -Value 2 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Tcpip\Parameters" -Name "DisableIPSourceRouting" -Value 2 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters" -Name "DisableStrictNameChecking" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF" -Name "EditFlags" -Value 0x10000 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg" -Name "EditFlags" -Value 0x10000 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Wdp" -Name "EditFlags" -Value 0x10000 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Script Host\Settings" -Name "Enabled" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Tcpip\Parameters" -Name "EnableICMPRedirect" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Bitmap" -Name "FriendlyTypeName" -Value '@%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF" -Name "FriendlyTypeName" -Value '@%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg" -Name "FriendlyTypeName" -Value '@%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Gif" -Name "FriendlyTypeName" -Value '@%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Png" -Name "FriendlyTypeName" -Value '@%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows Defender Security Center\Systray" -Name "HideSystray" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Bitmap" -Name "ImageOptionFlags" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF" -Name "ImageOptionFlags" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg" -Name "ImageOptionFlags" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Gif" -Name "ImageOptionFlags" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Png" -Name "ImageOptionFlags" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Wdp" -Name "ImageOptionFlags" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Name "MuiVerb" -Value '@photoviewer.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.JFIF\shell\open" -Name "MuiVerb" -Value '@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Jpeg\shell\open" -Name "MuiVerb" -Value '@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Gif\shell\open" -Name "MuiVerb" -Value '@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\PhotoViewer.FileAssoc.Wdp\shell\open" -Name "MuiVerb" -Value '@%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll' -Type ExpandString | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Applications\photoviewer.dll\shell\print" -Name "NeverDefault" -Value '' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\NetBT\Parameters" -Name "NodeType" -Value 2 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Netbt\Parameters" -Name "NoNameReleaseOnDemand" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint" -Name "RestrictDriverInstallationToAdministrators" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\.NETFramework\v2.0.50727" -Name "SchUseStrongCrypto" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\.NETFramework\v3.0" -Name "SchUseStrongCrypto" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\.NETFramework\v4.0.30319" -Name "SchUseStrongCrypto" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v2.0.50727" -Name "SchUseStrongCrypto" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v3.0" -Name "SchUseStrongCrypto" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v4.0.30319" -Name "SchUseStrongCrypto" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\TimeZoneInformation" -Name "StandardName" -Value '@tzres.dll' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener" -Name "Start" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\ControlSet001\Services\PcaSvc" -Name "Start" -Value 4 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\PcaSvc\Start" -Name "Start" -Value 4 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Software\Wow6432Node\CLSID\{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\.NETFramework\v2.0.50727" -Name "SystemDefaultTlsVersions" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\.NETFramework\v3.0" -Name "SystemDefaultTlsVersions" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\.NETFramework\v4.0.30319" -Name "SystemDefaultTlsVersions" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v2.0.50727" -Name "SystemDefaultTlsVersions" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v3.0" -Name "SystemDefaultTlsVersions" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\.NETFramework\v4.0.30319" -Name "SystemDefaultTlsVersions" -Value 1 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Defender\Features" -Name "TamperProtection" -Value 5 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\TimeZoneInformation" -Name "TimeZoneKeyName" -Value 'Eastern Standard Time' -Type String | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device" -Name "DevicePasswordLessBuildVersion" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\WOW6432Node\Microsoft\EdgeUpdate" -Name "DoNotUpdateToEdgeWithChromium" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\EdgeUpdate" -Name "DoNotUpdateToEdgeWithChromium" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\Network" -Name "NewNetworkWindowOff" -Type DWord -Value 0xB0940064 | Out-Null
@@ -804,8 +974,9 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "MaxTelemetryAllowed" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "SettingsPageVisibility" -Type String -Value "hide:appsfeatures;appsforwebsites;autoplay;backup;clipboard;cortana;cortana-language;cortana-moredetails;cortana-permissions;cortana-windowssearch;crossdevice;datausage;delivery-optimization;extras;findmydevice;fonts;maps;mobile-devices;network-cellular;network-dialup;network-directaccess;network-mobilehotspot;network-proxy;network-status;network-vpn;nfctransactions;otherusers;pen;privacy-accountinfo;privacy-activityhistory;privacy-backgroundapps;privacy-calendar;privacy-callhistory;privacy-contacts;privacy-customdevices;privacy-email;privacy-feedback;privacy-general;privacy-location;privacy-messaging;privacy-motion;privacy-radios;privacy-speech;privacy-speechtyping;quiethours;recovery;regionlanguage;remotedesktop;search;search-moredetails;storagesense;sync;themes;troubleshoot;usb;workplace;privacy-documents;privacy-videos;privacy-pictures;privacy-appdiagnostics;privacy-phonecalls;privacy-notifications;privacy-voiceactivation;privacy-tasks;privacy-automaticfiledownloads;project;developers;search-permissions;powersleep;windowsdefender;signinoptions;emailandaccounts;tabletmode;network;speech;" | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "SettingsPageVisibility" -Type String -Value "hide:appsfeatures;appsforwebsites;autoplay;backup;clipboard;cortana;cortana-language;cortana-moredetails;cortana-permissions;cortana-windowssearch;crossdevice;datausage;delivery-optimization;extras;findmydevice;fonts;maps;mobile-devices;network-cellular;network-dialup;network-directaccess;network-mobilehotspot;network-proxy;network-status;network-vpn;nfctransactions;otherusers;pen;privacy-accountinfo;privacy-activityhistory;privacy-backgroundapps;privacy-calendar;privacy-callhistory;privacy-contacts;privacy-customdevices;privacy-email;privacy-feedback;privacy-general;privacy-location;privacy-messaging;privacy-motion;privacy-radios;privacy-speech;privacy-speechtyping;quiethours;recovery;regionlanguage;remotedesktop;search;search-moredetails;storagesense;sync;themes;troubleshoot;usb;workplace;privacy-documents;privacy-videos;privacy-pictures;privacy-appdiagnostics;privacy-phonecalls;privacy-notifications;privacy-voiceactivation;privacy-tasks;privacy-automaticfiledownloads;project;developers;search-permissions;powersleep;windowsdefender;signinoptions;emailandaccounts;tabletmode;network;speech;gaming-gamebar;gaming-gamedvr;gaming-broadcasting;gaming-gamemode;gaming-xboxnetworking;yourinfo;" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ShutdownWithoutLogon" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "DisableCAD" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections" -Type DWord -Value 1 | Out-Null
@@ -818,6 +989,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Google\Chrome" -Name "ChromeCleanupReportingEnabled" -Type String -Value "0" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Google\Chrome" -Name "MetricsReportingEnabled" -Type String -Value "0" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\AppV\CEIP" -Name "CEIPEnable" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "HubsSidebarEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AutofillCreditCardEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SyncDisabled" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "BackgroundModeEnabled" -Type DWord -Value 0 | Out-Null
@@ -841,6 +1013,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\010103000F0000F0010000000F0000F0C967A3643C3AD745950DA7859209176EF5B87C875FA20DF21951640E807D7C24" -Name "Category" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform" -Name "NoGenTicket" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\PasswordLess\Device" -Name "DevicePasswordLessBuildVersion" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Reliability" -Name "ShutdownReasonOn" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\AppCompat" -Name "AITEnable" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\AppCompat" -Name "DisableInventory" -Type DWord -Value 1 | Out-Null
@@ -851,7 +1024,6 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsSpotlightFeatures" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "MaxTelemetryAllowed" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoNewAppAlert" -Type DWord -Value 1 | Out-Null
@@ -907,13 +1079,6 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Sense" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\Sense" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
-    # NOTE(dij): Apperently disabling these services fuck up the ability for Windows to download apps or updates.
-    #            That's not good!
-    #
-    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
-    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\WdNisSvc" -Name "AutorunsDisabled" -Type DWord -Value 3 | Out-Null
-    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\wscsvc" -Name "Start" -Type DWord -Value 4 | Out-Null
-    #   Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\mpssvc" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\PcaSvc" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\SecurityHealthService" -Name "Start" -Type DWord -Value 4 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules" -Name "{2765E0F4-2918-4A46-B9C9-43CDD8FCBA2B}" -Type String -Value "BlockCortana|Action=Block|Active=TRUE|Dir=Out|App=C:\windows\systemapps\microsoft.windows.cortana_cw5n1h2txyewy\searchui.exe|Name=Search and Cortana application|AppPkgId=S-1-15-2-1861897761-1695161497-2927542615-642690995-327840285-2659745135-2630312742|" | Out-Null
@@ -984,6 +1149,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "NetworkPredictionOptions" -Type DWord -Value 2 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SearchSuggestEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AutofillAddressEnabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AutofillCreditCardEnabled" -Value 0 -Type DWord | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "ResolveNavigationErrorsUseWebService" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "AlternateErrorPagesEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SendSiteInfoToImproveServices" -Type DWord -Value 0 | Out-Null
@@ -995,6 +1161,8 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "BlockThirdPartyCookies" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "TrackingPrevention" -Type DWord -Value 3 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "DefaultGeolocationSetting" -Type DWord -Value 3 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "BackgroundModeEnabled" -Value 0 -Type DWord | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Edge" -Name "SyncDisabled" -Value 1 -Type DWord | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer\Suggested Sites" -Name "Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Internet Explorer" -Name "AllowServicePoweredQSA" -Type DWord -Value 0 | Out-Null
@@ -1013,7 +1181,7 @@ function RegistrySettings($IsAdmin) {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\CrashControl" -Name "DisplayParameters" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows NT\DNSClient" -Name "DisableSmartNameResolution" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Policies\Microsoft\Windows\OOBE" -Name "DisablePrivacyExperience" -Type DWord -Value 1 | Out-Null
-    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Defender Security Center\Virus and threat protection" -Name "SummaryNotificationDisabled" -TypeDWord -Value 1 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows Defender Security Center\Virus and threat protection" -Name "SummaryNotificationDisabled" -Type DWord -Value 1 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Notifications\Data" -Name "418A073AA3BC3475" -Type Binary -Value ([byte[]](62, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 1, 2, 4, 0)) | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control" -Name "WaitToKillServiceTimeout" -Type String -Value "1000" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shell\cmd" -Name "HideBasedOnVelocityId" | Out-Null
@@ -1023,6 +1191,8 @@ function RegistrySettings($IsAdmin) {
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\QualityCompat" -Name "cadca5fe-87d3-4b96-b7fb-a231484277cc" | Out-Null
     Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\System\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" | Out-Null
+    Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth" | Out-Null
+    Remove-ItemProperty -ErrorAction SilentlyContinue -Force -Path "HKU:\Default\Software\Microsoft\Windows\CurrentVersion\Run" -Name "OneDriveSetup" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}" -Recurse | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}" -Recurse | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}" -Recurse | Out-Null
@@ -1047,6 +1217,12 @@ function RegistrySettings($IsAdmin) {
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" | Out-Null
     Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" | Out-Null
+    Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" | Out-Null
+    Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" | Out-Null
+    Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" | Out-Null
+    Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" | Out-Null
+    Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" | Out-Null
+    Remove-Item -ErrorAction SilentlyContinue -Force -Path "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" | Out-Null
     If ($IsAdmin) {
         $u = New-Object System.Security.Principal.NTAccount($env:UserName)
         RegistryUserSettings $($u.Translate([System.Security.Principal.SecurityIdentifier]).value)
@@ -1220,6 +1396,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\gazeInput" -Name "Value" -Type String -Value "Deny" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\CDP" -Name "RomeSdkChannelUserAuthzPolicy" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "FeatureManagementEnabled" -Value 0 -Type DWord | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type DWord -Value 0 | Out-Null
@@ -1233,6 +1410,7 @@ function RegistryUserSettings($uid = "") {
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353698Enabled" -Type DWord -Value 0 | Out-Null
+    Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0 | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\LooselyCoupled" -Name "Type" -Type String -Value "LooselyCoupled" | Out-Null
     Set-ItemProperty -ErrorAction SilentlyContinue -Force -Path "$regpath\Software\Microsoft\Windows\CurrentVersion\DeviceAccess\Global\LooselyCoupled" -Name "Value" -Type String -Value "Deny" | Out-Null
