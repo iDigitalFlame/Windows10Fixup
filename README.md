@@ -41,3 +41,5 @@ powershell -ExecutionPolicy Unrestricted -Command "Invoke-WebRequest -UseBasicPa
 ```
 
 The script will prompt for UAC when needed.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z4121TDS)
